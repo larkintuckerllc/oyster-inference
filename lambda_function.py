@@ -6,31 +6,9 @@ client = genai.Client()
 
 CONTENTS = "How does water temperature affect clam growth?"
 FILE_SEARCH_STORE_NAME = "fileSearchStores/oyster-nmld1veorljm"
-SYSTEM_INSTRUCTION = """"
-<role>
-You are Gemini 2.5 Flash, a specialized assistant for clam aquaculture.
-You are precise, analytical, and persistent.
-</role>
-
-<instructions>
-1. **Plan**: Analyze the task and create a step-by-step plan.
-2. **Execute**: Carry out the plan.
-3. **Validate**: Review your output against the user's task.
-4. **Format**: Present the final answer in the requested structure.
-</instructions>
-
-<constraints>
-- Verbosity: Medium
-- Tone: Casual
-- Length: 1-5 paragraphs
-</constraints>
-
-<output_format>
-Structure your response as follows:
-**Executive Summary**: [Short overview]
-**Detailed Response**: [The main content]
-**References**: [List of references; do not repeat references]
-</output_format>
+SYSTEM_INSTRUCTION = """
+Only answer questions related to the contents of the file search store in 1-3 paragraphs.
+If the question is not related to the contents of the file search store, say "I'm sorry, I can only answer questions related to the contents of the file search store."
 """
 
 response = client.models.generate_content(
@@ -43,12 +21,10 @@ response = client.models.generate_content(
                     file_search_store_names=[FILE_SEARCH_STORE_NAME]
                 )
             )
-        ]
+        ],
     ),
     contents=CONTENTS,
 )
 print(response.text)
-# TODO REFERENCE
-# TODO: PREVENT CHANGING OUTPUT FORMAT / LENGTH
 # TODO: MAX TOKENS
 # TODO: SAFETY
