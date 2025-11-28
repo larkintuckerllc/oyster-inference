@@ -1,3 +1,4 @@
+import json
 from google import genai
 from google.genai import types
 
@@ -16,12 +17,31 @@ response = client.models.generate_content(
     model="gemini-2.5-flash",
     config=types.GenerateContentConfig(
         system_instruction=SYSTEM_INSTRUCTION,
+        max_output_tokens=1000,
+        safety_settings=[
+            types.SafetySetting(
+                category=types.HarmCategory.HARM_CATEGORY_HARASSMENT,
+                threshold=types.HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+            ),
+            types.SafetySetting(
+                category=types.HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+                threshold=types.HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+            ),
+            types.SafetySetting(
+                category=types.HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+                threshold=types.HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+            ),
+            types.SafetySetting(
+                category=types.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+                threshold=types.HarmBlockThreshold.BLOCK_LOW_AND_ABOVE,
+            ),
+        ],
         tools=[
             types.Tool(
                 file_search=types.FileSearch(
                     file_search_store_names=[FILE_SEARCH_STORE_NAME]
                 )
-            )
+            ),
         ],
     ),
     contents=CONTENTS,
@@ -38,8 +58,8 @@ if response.candidates and response.candidates[0].grounding_metadata:
                 "name": parts[0],
                 "url": parts[1]
             })
-
-print(response.text)
-print(unique_titles)
-# TODO: MAX TOKENS
-# TODO: SAFETY
+output = json.dumps({
+    "text": response.text,
+    "titles": unique_titles
+})
+print(output)
