@@ -8,3 +8,8 @@ wheels/
 
 # Virtual environments
 .venv
+
+# Other files
+package/
+my_deployment_package.zip
+requirements.txt

@@ -6,6 +6,7 @@ from google import genai
 from google.genai import types
 
 
+BUCKET_NAME = os.environ["BUCKET_NAME"]
 FILE_SEARCH_STORE_NAME = os.environ["FILE_SEARCH_STORE_NAME"]
 SYSTEM_INSTRUCTION = """
 Only answer questions related to the contents of the file search store in 1-3 paragraphs.
@@ -16,7 +17,7 @@ I can only answer questions related to the contents of the file search store."
 client = genai.Client()
 s3_client = boto3.client("s3")
 
-def lambda_handler(event, context):
+def lambda_handler(event, _context):
     for record in event["Records"]:
         contents = record["body"]
         response = client.models.generate_content(
@@ -68,5 +69,12 @@ def lambda_handler(event, context):
             "text": response.text,
             "titles": unique_titles
         })
-        print(output)
-        # TODO STORE IN S3
+        s3_client.put_object(
+            Bucket=BUCKET_NAME,
+            Key=record["messageId"],
+            Body=output
+        )
+    return {
+        "statusCode": 200,
+        "body": f"Successfully processed messages"
+    }
