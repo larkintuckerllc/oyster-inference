@@ -9,9 +9,10 @@ from google.genai import types
 BUCKET_NAME = os.environ["BUCKET_NAME"]
 FILE_SEARCH_STORE_NAME = os.environ["FILE_SEARCH_STORE_NAME"]
 SYSTEM_INSTRUCTION = """
-Only answer questions related to the contents of the file search store in 1-3 paragraphs.
-If the question is not related to the contents of the file search store, say "I'm sorry,
-I can only answer questions related to the contents of the file search store."
+Only answer questions that can be answered based on the contents of the file search store
+in 1-3 paragraphs. If the question cannot be answered to based on the contents of the file
+search store, say "I'm sorry, I can only answer questions related to the contents of
+consumers content on the Safe Oysters website at https://marexgasg.wixsite.com/safeoysters."
 """
 
 client = genai.Client()
